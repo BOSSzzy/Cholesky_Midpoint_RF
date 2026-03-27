@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<deployment-project plugin="plugin.toolbox" plugin-version="1.0">
+  <configuration build-checksum="false" file="rf2d_toolbox.prj" location="${PROJECT_ROOT}/toolbox" name="rf2d" target="target.toolbox">
+    <param.appname>rf2d</param.appname>
+    <param.authnameorg></param.authnameorg>
+    <param.email></param.email>
+    <param.company></param.company>
+    <param.summary>2D parametric random field generator toolbox</param.summary>
+    <param.description>Object-oriented random field generation toolbox with Cholesky, KL, and circulant solvers.</param.description>
+    <param.toolboxmatlabpath>${PROJECT_ROOT}</param.toolboxmatlabpath>
+    <param.output>${PROJECT_ROOT}/dist</param.output>
+    <fileset.main>
+      <file>${PROJECT_ROOT}/+rf2d</file>
+      <file>${PROJECT_ROOT}/+docs</file>
+      <file>${PROJECT_ROOT}/RandomField2DCholMethod.m</file>
+      <file>${PROJECT_ROOT}/README.md</file>
+      <file>${PROJECT_ROOT}/tests</file>
+      <file>${PROJECT_ROOT}/demo</file>
+    </fileset.main>
+  </configuration>
+</deployment-project>
