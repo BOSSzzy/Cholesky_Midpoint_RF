@@ -9,6 +9,8 @@ targets = {
     fullfile(pwd, "+rf2d", "createGenerator.m")
     fullfile(pwd, "+rf2d", "RandomFieldGenerator.m")
     fullfile(pwd, "+rf2d", "CovarianceModel.m")
+    fullfile(pwd, "+rf2d", "runConditionalRandomField.m")
+    fullfile(pwd, "+rf2d", "ConditionalRandomField.m")
     fullfile(pwd, "RandomField2DCholMethod.m")
     };
 for i = 1:numel(targets)

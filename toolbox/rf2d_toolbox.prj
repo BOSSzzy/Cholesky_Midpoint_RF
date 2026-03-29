@@ -13,6 +13,8 @@
       <file>${PROJECT_ROOT}/+rf2d</file>
       <file>${PROJECT_ROOT}/+docs</file>
       <file>${PROJECT_ROOT}/RandomField2DCholMethod.m</file>
+      <file>${PROJECT_ROOT}/randex.m</file>
+      <file>${PROJECT_ROOT}/conrandex.m</file>
       <file>${PROJECT_ROOT}/README.md</file>
       <file>${PROJECT_ROOT}/tests</file>
       <file>${PROJECT_ROOT}/demo</file>

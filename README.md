@@ -8,6 +8,7 @@ It provides multiple covariance kernels, solver backends, visualization/export u
 - Covariance models: `gaussian`, `exponential`, `spherical`, `matern`
 - Solver backends: `cholesky`, `kl`, `circulant`, `approximate`, and `auto` selection
 - Generation modes: single realization, batch generation, optional parallel and GPU workflows
+- Conditional random fields (CRF): unconditional + conditioned realizations from grid and observation tables
 - Visualization: contour, surface, histogram, variogram cloud
 - Export: CSV, VTK, MAT
 - Compatibility: legacy wrapper `RandomField2DCholMethod.m`
@@ -18,12 +19,15 @@ It provides multiple covariance kernels, solver backends, visualization/export u
   - `createGenerator.m`: public factory API
   - `RandomFieldGenerator.m`: high-level generator object
   - `CovarianceModel.m`: covariance kernels and pairwise/lagged covariance
+  - `ConditionalRandomField.m`: CRF workflow for unconditional + conditional fields
+  - `runConditionalRandomField.m`: public CRF entry point
   - `Validation.m`: model/solver/grid/parameter validation
   - `LegacyAdapter.m`: bridge for the legacy function interface
   - `+solvers/`: solver implementations and auto-selection factory
   - `+viz/`: plotting helpers
   - `+io/`: export helpers
 - `RandomField2DCholMethod.m`: historical API wrapper
+- `randex.m` / `conrandex.m`: CRF compatibility wrappers
 - `demo/`: benchmark and Live Script conversion utility
 - `tests/`: MATLAB unit tests
 - `+docs/generateDocs.m`: HTML documentation publishing
@@ -76,6 +80,26 @@ Common generator methods:
 - `contourPlot`, `surfacePlot`, `histogramPlot`, `variogramCloud`
 - `exportCSV`, `exportVTK`, `exportMAT`
 
+CRF API:
+
+- `rf2d.runConditionalRandomField(config)`: file-based CRF pipeline
+- `rf2d.ConditionalRandomField.fromTables(gridTable, observationTable, config)`: in-memory CRF pipeline
+- `randex(config)` and `conrandex(config)`: compatibility entry points
+
+Minimal CRF config fields:
+
+- `grid.dx`, `grid.dy`
+- `covModel.type`, `covModel.rangeX`, `covModel.rangeY`, `covModel.nugget`
+- `prior.mean`, `prior.std`
+- `sim.nRealizations`, `sim.randomSeed`, `sim.jitter`
+- `io.gridTablePath`, `io.observationPath`, `io.unconditionalPath`, `io.conditionalPath`
+- `logging.enabled`, `logging.level`
+
+CRF input tables:
+
+- Grid table columns: `id`, `j`, `k`
+- Observation table columns: `j`, `k`, `obsValue`, `obsVar`
+
 ## Solver selection behavior
 
 When `Solver="auto"`:
@@ -102,6 +126,12 @@ Run:
 
 ```matlab
 demo.demo_benchmark_rf2d
+```
+
+Run the CRF demo with project-level sample tables (outside any `data` subfolder):
+
+```matlab
+demo.demo_crf_rf2d
 ```
 
 To convert the demo script into a Live Script:
