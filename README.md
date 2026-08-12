@@ -70,7 +70,7 @@ $$\mathbb{E}[\mathbf{X}]=\mu\mathbf{1}.$$
 
 and
 
-$$\operatorname{Cov}[\mathbf{X}]=\mathbf{L}\operatorname{Cov}[\mathbf{z}]\mathbf{L}^{\mathsf T}=\mathbf{L}\mathbf{L}^{\mathsf T}=\mathbf{C}_{\varepsilon}\approx\mathbf{C}.$$
+$$\mathrm{Cov}[\mathbf{X}]=\mathbf{L}\,\mathrm{Cov}[\mathbf{z}]\,\mathbf{L}^{\mathsf T}=\mathbf{L}\mathbf{L}^{\mathsf T}=\mathbf{C}_{\varepsilon}\approx\mathbf{C}.$$
 
 For batch simulation, the same factor multiplies a matrix of independent standard-normal samples, which avoids repeating the factorization.
 
@@ -88,7 +88,7 @@ $$P(\mathbf{s})=\exp\!\left[m_{\ln}+s_{\ln}G(\mathbf{s})\right].$$
 
 This transformation gives the requested first two marginal moments:
 
-$$\mathbb{E}[P]=m, \qquad \frac{\sqrt{\operatorname{Var}[P]}}{\mathbb{E}[P]}=v.$$
+$$\mathbb{E}[P]=m, \qquad \frac{\sqrt{\mathrm{Var}[P]}}{\mathbb{E}[P]}=v.$$
 
 The legacy adapter uses this mapping to construct spatially varying cohesion and friction-angle fields from two Gaussian realizations.
 
@@ -96,7 +96,7 @@ The legacy adapter uses this mapping to construct spatially varying cohesion and
 
 Let `x_u` denote an unconditional realization over all grid cells, `y` the vector of measured values, and `H` the operator that selects simulated values at the observation cells. Define `C_go` as the grid-to-observation covariance, `C_oo` as the observation-to-observation covariance, and `R` as the diagonal observation-error covariance:
 
-$$\mathbf{R}=\operatorname{diag}\left(\sigma_{\mathrm{obs},1}^{2},\ldots,\sigma_{\mathrm{obs},m}^{2}\right).$$
+$$\mathbf{R}=\mathrm{diag}\!\left(\sigma_{\mathrm{obs},1}^{2},\ldots,\sigma_{\mathrm{obs},m}^{2}\right).$$
 
 The kriging gain used by `rf2d.ConditionalRandomField` is
 
