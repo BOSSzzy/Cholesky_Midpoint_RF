@@ -20,11 +20,7 @@
 
 In the conditional random-field workflow, each cell identified by integer indices `j` and `k` is represented by its midpoint. For cell dimensions `dx` and `dy`, the physical coordinates are
 
-$$
-x_j = \left(j-\frac{1}{2}\right)\Delta x,
-\qquad
-y_k = \left(k-\frac{1}{2}\right)\Delta y.
-$$
+$$x_j = \left(j-\frac{1}{2}\right)\Delta x, \qquad y_k = \left(k-\frac{1}{2}\right)\Delta y.$$
 
 The midpoint convention associates every simulated value with the center of a finite cell rather than a cell corner.
 
@@ -32,66 +28,29 @@ The midpoint convention associates every simulated value with the center of a fi
 
 Let two grid points be located at
 
-$$
-\mathbf{s}_i=(x_i,y_i),
-\qquad
-\mathbf{s}_j=(x_j,y_j).
-$$
+$$\mathbf{s}_i=(x_i,y_i), \qquad \mathbf{s}_j=(x_j,y_j).$$
 
 The implementation introduces direction-dependent correlation lengths through the normalized separation
 
-$$
-h_{ij}
-=
-\sqrt{
-\left(\frac{x_i-x_j}{\ell_x}\right)^2
-+
-\left(\frac{y_i-y_j}{\ell_y}\right)^2
-},
-$$
+$$h_{ij}=\sqrt{\left(\frac{x_i-x_j}{\ell_x}\right)^2+\left(\frac{y_i-y_j}{\ell_y}\right)^2}.$$
 
 where `corrLength(1)` and `corrLength(2)` correspond to the positive scales `ell_x` and `ell_y`. The discrete covariance matrix is then assembled as
 
-$$
-C_{ij}
-=
-\sigma^2\rho(h_{ij})
-+
-\tau^2\delta_{ij},
-$$
+$$C_{ij}=\sigma^2\rho(h_{ij})+\tau^2\delta_{ij}.$$
 
 where `variance` is the field variance, `nugget` is the diagonal nugget, and the Kronecker delta equals one only when the two indices coincide.
 
 The four normalized kernels implemented by `rf2d.CovarianceModel` are
 
-$$
-\rho_{\mathrm{Gaussian}}(h)=\exp(-h^2),
-$$
+$$\rho_{\mathrm{Gaussian}}(h)=\exp(-h^2).$$
 
-$$
-\rho_{\mathrm{Exponential}}(h)=\exp(-h),
-$$
+$$\rho_{\mathrm{Exponential}}(h)=\exp(-h).$$
 
-$$
-\rho_{\mathrm{Spherical}}(h)
-=
-\begin{cases}
-1-\dfrac{3}{2}h+\dfrac{1}{2}h^3, & 0\leq h\leq 1,\\
-0, & h>1,
-\end{cases}
-$$
+$$\rho_{\mathrm{Spherical}}(h)=\begin{cases}1-\dfrac{3}{2}h+\dfrac{1}{2}h^3, & 0\leq h\leq 1,\\ 0, & h>1.\end{cases}$$
 
 and
 
-$$
-\rho_{\mathrm{Mat\acute{e}rn}}(h)
-=
-\frac{2^{1-\nu}}{\Gamma(\nu)}
-\left(\sqrt{2\nu}\,h\right)^\nu
-K_\nu\!\left(\sqrt{2\nu}\,h\right),
-\qquad
-\rho_{\mathrm{Mat\acute{e}rn}}(0)=1.
-$$
+$$\rho_{\mathrm{Mat\acute{e}rn}}(h)=\frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}\,h\right)^\nu K_\nu\!\left(\sqrt{2\nu}\,h\right), \qquad \rho_{\mathrm{Mat\acute{e}rn}}(0)=1.$$
 
 Here, `smoothness` is the positive Matérn parameter `nu`, `Gamma` is the gamma function, and `K_nu` is the modified Bessel function of the second kind. The combination of `ell_x`, `ell_y`, and `nu` controls the directional persistence and local roughness of the field.
 
@@ -99,45 +58,19 @@ Here, `smoothness` is the positive Matérn parameter `nu`, `Gamma` is the gamma 
 
 For `n` grid points, the covariance matrix is symmetrized and stabilized by a small diagonal jitter before factorization:
 
-$$
-\mathbf{C}_{\varepsilon}
-=
-\frac{\mathbf{C}+\mathbf{C}^{\mathsf T}}{2}
-+
-\varepsilon\mathbf{I}
-=
-\mathbf{L}\mathbf{L}^{\mathsf T}.
-$$
+$$\mathbf{C}_{\varepsilon}=\frac{\mathbf{C}+\mathbf{C}^{\mathsf T}}{2}+\varepsilon\mathbf{I}=\mathbf{L}\mathbf{L}^{\mathsf T}.$$
 
 If a trial factorization is not positive definite, the Cholesky solver increases the jitter geometrically until a stable lower-triangular factor is obtained. A standard-normal vector is then transformed into a correlated realization:
 
-$$
-\mathbf{z}\sim\mathcal{N}(\mathbf{0},\mathbf{I}),
-\qquad
-\mathbf{X}=\mu\mathbf{1}+\mathbf{L}\mathbf{z}.
-$$
+$$\mathbf{z}\sim\mathcal{N}(\mathbf{0},\mathbf{I}), \qquad \mathbf{X}=\mu\mathbf{1}+\mathbf{L}\mathbf{z}.$$
 
 Consequently,
 
-$$
-\mathbb{E}[\mathbf{X}]
-=
-\mu\mathbf{1},
-$$
+$$\mathbb{E}[\mathbf{X}]=\mu\mathbf{1}.$$
 
 and
 
-$$
-\operatorname{Cov}[\mathbf{X}]
-=
-\mathbf{L}\operatorname{Cov}[\mathbf{z}]\mathbf{L}^{\mathsf T}
-=
-\mathbf{L}\mathbf{L}^{\mathsf T}
-=
-\mathbf{C}_{\varepsilon}
-\approx
-\mathbf{C}.
-$$
+$$\operatorname{Cov}[\mathbf{X}]=\mathbf{L}\operatorname{Cov}[\mathbf{z}]\mathbf{L}^{\mathsf T}=\mathbf{L}\mathbf{L}^{\mathsf T}=\mathbf{C}_{\varepsilon}\approx\mathbf{C}.$$
 
 For batch simulation, the same factor multiplies a matrix of independent standard-normal samples, which avoids repeating the factorization.
 
@@ -145,33 +78,17 @@ For batch simulation, the same factor multiplies a matrix of independent standar
 
 Positive geotechnical parameters such as cohesion and friction angle are commonly represented by lognormal random fields. Given a target arithmetic mean `m` and coefficient of variation `v`, the corresponding normal-space parameters are
 
-$$
-s_{\ln}
-=
-\sqrt{\ln(1+v^2)},
-$$
+$$s_{\ln}=\sqrt{\ln(1+v^2)}.$$
 
-$$
-m_{\ln}
-=
-\ln(m)-\frac{1}{2}s_{\ln}^2.
-$$
+$$m_{\ln}=\ln(m)-\frac{1}{2}s_{\ln}^2.$$
 
 If `G(s)` is a zero-mean, unit-variance Gaussian random field, the physical parameter field is obtained from
 
-$$
-P(\mathbf{s})
-=
-\exp\!\left[m_{\ln}+s_{\ln}G(\mathbf{s})\right].
-$$
+$$P(\mathbf{s})=\exp\!\left[m_{\ln}+s_{\ln}G(\mathbf{s})\right].$$
 
 This transformation gives the requested first two marginal moments:
 
-$$
-\mathbb{E}[P]=m,
-\qquad
-\frac{\sqrt{\operatorname{Var}[P]}}{\mathbb{E}[P]}=v.
-$$
+$$\mathbb{E}[P]=m, \qquad \frac{\sqrt{\operatorname{Var}[P]}}{\mathbb{E}[P]}=v.$$
 
 The legacy adapter uses this mapping to construct spatially varying cohesion and friction-angle fields from two Gaussian realizations.
 
@@ -179,33 +96,15 @@ The legacy adapter uses this mapping to construct spatially varying cohesion and
 
 Let `x_u` denote an unconditional realization over all grid cells, `y` the vector of measured values, and `H` the operator that selects simulated values at the observation cells. Define `C_go` as the grid-to-observation covariance, `C_oo` as the observation-to-observation covariance, and `R` as the diagonal observation-error covariance:
 
-$$
-\mathbf{R}
-=
-\operatorname{diag}
-\left(\sigma_{\mathrm{obs},1}^{2},\ldots,
-\sigma_{\mathrm{obs},m}^{2}\right).
-$$
+$$\mathbf{R}=\operatorname{diag}\left(\sigma_{\mathrm{obs},1}^{2},\ldots,\sigma_{\mathrm{obs},m}^{2}\right).$$
 
 The kriging gain used by `rf2d.ConditionalRandomField` is
 
-$$
-\mathbf{K}
-=
-\mathbf{C}_{go}
-\left(\mathbf{C}_{oo}+\mathbf{R}\right)^{-1}.
-$$
+$$\mathbf{K}=\mathbf{C}_{go}\left(\mathbf{C}_{oo}+\mathbf{R}\right)^{-1}.$$
 
 Each unconditional realization is corrected by its observation-space innovation:
 
-$$
-\mathbf{x}_{c}
-=
-\mathbf{x}_{u}
-+
-\mathbf{K}
-\left(\mathbf{y}-\mathbf{H}\mathbf{x}_{u}\right).
-$$
+$$\mathbf{x}_{c}=\mathbf{x}_{u}+\mathbf{K}\left(\mathbf{y}-\mathbf{H}\mathbf{x}_{u}\right).$$
 
 The correction is strongest near reliable observations and decays spatially according to the selected covariance model. Nonzero observation variance prevents exact interpolation and represents measurement uncertainty.
 
@@ -213,24 +112,12 @@ The correction is strongest near reliable observations and decays spatially acco
 
 - **KL solver:** retains the leading covariance eigenpairs and samples from the reduced expansion
 
-  $$
-  \mathbf{X}
-  \approx
-  \mu\mathbf{1}
-  +
-  \mathbf{V}_r\mathbf{\Lambda}_r^{1/2}\mathbf{z}_r.
-  $$
+  $$\mathbf{X}\approx\mu\mathbf{1}+\mathbf{V}_r\mathbf{\Lambda}_r^{1/2}\mathbf{z}_r.$$
 
 - **Circulant embedding:** embeds the stationary covariance on a larger regular grid, obtains its nonnegative spectrum using a two-dimensional FFT, and samples realizations through an inverse FFT.
 - **Nyström approximation:** selects landmark points and constructs a low-rank covariance approximation
 
-  $$
-  \mathbf{C}
-  \approx
-  \mathbf{C}_{nm}\mathbf{C}_{mm}^{-1}\mathbf{C}_{mn}
-  =
-  \mathbf{B}\mathbf{B}^{\mathsf T}.
-  $$
+  $$\mathbf{C}\approx\mathbf{C}_{nm}\mathbf{C}_{mm}^{-1}\mathbf{C}_{mn}=\mathbf{B}\mathbf{B}^{\mathsf T}.$$
 
 These backends reduce the memory or computational cost of direct dense factorization for larger problems.
 
