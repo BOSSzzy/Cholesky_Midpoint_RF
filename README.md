@@ -50,7 +50,7 @@ $$\rho_{\mathrm{Spherical}}(h)=\begin{cases}1-\dfrac{3}{2}h+\dfrac{1}{2}h^3, & 0
 
 and
 
-$$\rho_{\mathrm{Mat\acute{e}rn}}(h)=\frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}\,h\right)^\nu K_\nu\!\left(\sqrt{2\nu}\,h\right), \qquad \rho_{\mathrm{Mat\acute{e}rn}}(0)=1.$$
+$$\rho_{\mathrm{Mat\acute{e}rn}}(h)=\frac{2^{1-\nu}}{\Gamma(\nu)}\left(\sqrt{2\nu}\,h\right)^\nu K_\nu\left(\sqrt{2\nu}\,h\right), \qquad \rho_{\mathrm{Mat\acute{e}rn}}(0)=1.$$
 
 Here, `smoothness` is the positive Matérn parameter `nu`, `Gamma` is the gamma function, and `K_nu` is the modified Bessel function of the second kind. The combination of `ell_x`, `ell_y`, and `nu` controls the directional persistence and local roughness of the field.
 
@@ -84,7 +84,7 @@ $$m_{\ln}=\ln(m)-\frac{1}{2}s_{\ln}^2.$$
 
 If `G(s)` is a zero-mean, unit-variance Gaussian random field, the physical parameter field is obtained from
 
-$$P(\mathbf{s})=\exp\!\left[m_{\ln}+s_{\ln}G(\mathbf{s})\right].$$
+$$P(\mathbf{s})=\exp\left[m_{\ln}+s_{\ln}G(\mathbf{s})\right].$$
 
 This transformation gives the requested first two marginal moments:
 
@@ -96,7 +96,7 @@ The legacy adapter uses this mapping to construct spatially varying cohesion and
 
 Let `x_u` denote an unconditional realization over all grid cells, `y` the vector of measured values, and `H` the operator that selects simulated values at the observation cells. Define `C_go` as the grid-to-observation covariance, `C_oo` as the observation-to-observation covariance, and `R` as the diagonal observation-error covariance:
 
-$$\mathbf{R}=\mathrm{diag}\!\left(\sigma_{\mathrm{obs},1}^{2},\ldots,\sigma_{\mathrm{obs},m}^{2}\right).$$
+$$\mathbf{R}=\mathrm{diag}\left(\sigma_{\mathrm{obs},1}^{2},\ldots,\sigma_{\mathrm{obs},m}^{2}\right).$$
 
 The kriging gain used by `rf2d.ConditionalRandomField` is
 
@@ -110,14 +110,15 @@ The correction is strongest near reliable observations and decays spatially acco
 
 ### Alternative solver backends
 
-- **KL solver:** retains the leading covariance eigenpairs and samples from the reduced expansion
+**KL solver.** It retains the leading covariance eigenpairs and samples from the reduced expansion:
 
-  $$\mathbf{X}\approx\mu\mathbf{1}+\mathbf{V}_r\mathbf{\Lambda}_r^{1/2}\mathbf{z}_r.$$
+$$\mathbf{X}\approx\mu\mathbf{1}+\mathbf{V}_r\mathbf{\Lambda}_r^{1/2}\mathbf{z}_r.$$
 
-- **Circulant embedding:** embeds the stationary covariance on a larger regular grid, obtains its nonnegative spectrum using a two-dimensional FFT, and samples realizations through an inverse FFT.
-- **Nyström approximation:** selects landmark points and constructs a low-rank covariance approximation
+**Circulant embedding.** It embeds the stationary covariance on a larger regular grid, obtains its nonnegative spectrum using a two-dimensional FFT, and samples realizations through an inverse FFT.
 
-  $$\mathbf{C}\approx\mathbf{C}_{nm}\mathbf{C}_{mm}^{-1}\mathbf{C}_{mn}=\mathbf{B}\mathbf{B}^{\mathsf T}.$$
+**Nyström approximation.** It selects landmark points and constructs a low-rank covariance approximation:
+
+$$\mathbf{C}\approx\mathbf{C}_{nm}\mathbf{C}_{mm}^{-1}\mathbf{C}_{mn}=\mathbf{B}\mathbf{B}^{\mathsf T}.$$
 
 These backends reduce the memory or computational cost of direct dense factorization for larger problems.
 
